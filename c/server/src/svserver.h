@@ -22,6 +22,9 @@
 
 #include <map>
 #include <string>
+#include <string.h>
+#include <cstdlib>
+#include <cstdio>
 #include <vector>
 
 #include "user.h"
