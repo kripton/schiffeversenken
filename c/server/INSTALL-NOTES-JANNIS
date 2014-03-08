@@ -1,0 +1,4 @@
+aclocal ; autoheader; automake ; autoconf; autoreconf; automake --add-missing; autoreconf; ./configure; automake
+
+und dann manuell linken, da libtool es irgendwie nich hinbekommt
+
