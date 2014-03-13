@@ -3,7 +3,11 @@
 
 #include <QMainWindow>
 
-#include "connection.h"
+#include <QDebug>
+#include <QObject>
+#include <QtNetwork/QTcpSocket>
+#include <QString>
+#include <QStringList>
 
 namespace Ui {
 class MainWindow;
@@ -19,8 +23,17 @@ public:
 
     Ui::MainWindow *ui;
 
+public slots:
+    void doConnect();
+    void sockConnected();
+    void sockDisconnected();
+    void sockError(QAbstractSocket::SocketError);
+    void sockRead();
+
 private:
-    Connection *con;
+    QTcpSocket socket;
+    void ParseResponse(QString input);
+    bool isConnected;
 };
 
 #endif // MAINWINDOW_H
