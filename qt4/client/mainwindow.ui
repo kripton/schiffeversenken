@@ -61,7 +61,7 @@
           </size>
          </property>
          <property name="title">
-          <string>Player name</string>
+          <string>Spielername</string>
          </property>
          <widget class="QWidget" name="horizontalLayoutWidget_4">
           <property name="geometry">
@@ -102,7 +102,7 @@
           </size>
          </property>
          <property name="title">
-          <string>Server connection</string>
+          <string>Serververbindung</string>
          </property>
          <widget class="QWidget" name="horizontalLayoutWidget">
           <property name="geometry">
@@ -143,9 +143,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="bn_Connect">
              <property name="text">
-              <string>Connect</string>
+              <string>Verbinden</string>
              </property>
             </widget>
            </item>
@@ -183,9 +183,9 @@
               <widget class="QLineEdit" name="lineEdit_lobby"/>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_lobby">
+              <widget class="QPushButton" name="bn_LobbySend">
                <property name="text">
-                <string>PushButton</string>
+                <string>Absenden</string>
                </property>
               </widget>
              </item>
