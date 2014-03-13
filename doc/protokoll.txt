@@ -109,5 +109,5 @@
 * Parser des Servers alles nach einer solchen Zeichenfolge ab. Dies bedeutet
 * auch, dass ein Benutzer im Chat diese Zeichenfolge nicht benutzen könnte.
 *
-* Alle Kommunikation verwendet den Utf-8 Zeichensatz
+* Alle Kommunikation verwendet den UTF-8 Zeichensatz
 */
