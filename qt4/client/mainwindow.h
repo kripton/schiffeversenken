@@ -29,6 +29,7 @@ public slots:
     void sockDisconnected();
     void sockError(QAbstractSocket::SocketError);
     void sockRead();
+    void sendLobbyMessage();
 
 private:
     QTcpSocket socket;

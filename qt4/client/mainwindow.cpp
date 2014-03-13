@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->lineEdit_name->setValidator(new QRegExpValidator(QRegExp("[a-zA-Z0-9]{3,14}")));
 
     connect(ui->bn_Connect, SIGNAL(clicked()), this, SLOT(doConnect()));
+    connect(ui->bn_LobbySend, SIGNAL(clicked()), this, SLOT(sendLobbyMessage()));
+    connect(ui->lineEdit_lobby, SIGNAL(returnPressed()), this, SLOT(sendLobbyMessage()));
 
     isConnected = false;
 
@@ -59,6 +61,13 @@ void MainWindow::sockRead()
     }
 }
 
+void MainWindow::sendLobbyMessage()
+{
+    if (!isConnected) return;
+    socket.write(QString("501 %1").arg(ui->lineEdit_lobby->text()).toUtf8());
+    ui->lineEdit_lobby->setText("");
+}
+
 void MainWindow::doConnect()
 {
     if (isConnected)
@@ -82,5 +91,10 @@ void MainWindow::ParseResponse(QString input)
     {
         // Name angefragt
         socket.write(QString("210 %1").arg(ui->lineEdit_name->text()).toUtf8());
+    } else if (command == 503)
+    {
+        QString absender = input.split(" ")[1].mid(0, input.split(" ")[1].length() - 1);
+        QString text = ((QStringList)input.split(" ").mid(2)).join(" ");
+        ui->textBrowser_lobby->setText(QString("%1\n<%2> %3").arg(ui->textBrowser_lobby->toPlainText()).arg(absender).arg(text));
     }
 }
