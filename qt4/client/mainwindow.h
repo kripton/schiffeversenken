@@ -8,6 +8,8 @@
 #include <QtNetwork/QTcpSocket>
 #include <QString>
 #include <QStringList>
+#include <QHash>
+#include <cstdlib>
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +37,7 @@ private:
     QTcpSocket socket;
     void ParseResponse(QString input);
     bool isConnected;
+    QHash<QString, QColor> playerColors;
 };
 
 #endif // MAINWINDOW_H

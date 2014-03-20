@@ -87,14 +87,20 @@ void MainWindow::ParseResponse(QString input)
     if (command < 100)
     {
         qDebug() << "Command \"" << command << "\" invalid (<100)";
-    } else if (command == 101)
+    } else if (command == 101) // Server fragt nach unserem Namen
     {
-        // Name angefragt
         socket.write(QString("210 %1").arg(ui->lineEdit_name->text()).toUtf8());
-    } else if (command == 503)
+    } else if (command == 503) // Chatnachricht für uns (Lobby)
     {
         QString absender = input.split(" ")[1].mid(0, input.split(" ")[1].length() - 1);
         QString text = ((QStringList)input.split(" ").mid(2)).join(" ");
-        ui->textBrowser_lobby->setText(QString("%1\n<%2> %3").arg(ui->textBrowser_lobby->toPlainText()).arg(absender).arg(text));
+
+        if (!playerColors.contains(absender))
+        {
+            playerColors.insert(absender, QColor::fromHsvF((float)qrand() / RAND_MAX, 1.0, 0.5));
+        }
+
+        ui->textBrowser_lobby->setTextColor(playerColors[absender]);
+        ui->textBrowser_lobby->append(QString("<%1> %2").arg(absender).arg(text));
     }
 }
