@@ -110,4 +110,13 @@
 * auch, dass ein Benutzer im Chat diese Zeichenfolge nicht benutzen könnte.
 *
 * Alle Kommunikation verwendet den UTF-8 Zeichensatz
+* 
+* 
+* Zeichen der Spielfeldangaben vom Server zum Client:
+* . Wasser, noch nicht beschossen
+* s Schiff, noch nicht beschossen
+* o Schuss ins Wasser (Wasser nach Beschuss)
+* t Schuss auf Schiff (Schiff nach Beschuss)
+* v Versenkt (Schiff nach erfolgreichem Beschuss auf alle Elemente)
+* 
 */
