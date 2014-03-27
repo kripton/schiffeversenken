@@ -102,5 +102,11 @@ void MainWindow::ParseResponse(QString input)
 
         ui->textBrowser_lobby->setTextColor(playerColors[absender]);
         ui->textBrowser_lobby->append(QString("<%1> %2").arg(absender).arg(text));
+    } else if (command == 507) // Durchgabe eines verbundenen Spielers (nach 505 von uns)
+    {
+        // TODO Spielerliste
+    } else if (command == 603) // PING des servers an uns
+    {
+        socket.write(QString("604").toUtf8());
     }
 }
