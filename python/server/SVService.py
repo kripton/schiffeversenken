@@ -1,4 +1,3 @@
-import sys
 import socket
 import select
 import threading
@@ -12,7 +11,10 @@ from msgHandler import msgHandler
 def processWorker():
     service = SVService()
 
-    while service.cycle(): pass
+    try:
+        while service.cycle(): pass
+    except KeyboardInterrupt: pass
+    finally: del service
 
 
 class SVService:
@@ -22,7 +24,7 @@ class SVService:
         inQueueManager.connect()
         self.inQueue = inQueueManager.get_queue()
 
-        self.handleMsg = msgHandler()
+        self.handleMsg = msgHandler(self.logfunc)
         self.handleMsg.register('init', self.do_init)
         self.handleMsg.register('addClient', self.do_addClient)
         self.handleMsg.register('peerQuit', self.do_peerQuit)
@@ -34,20 +36,22 @@ class SVService:
         self.handleMsg.register('PINGreceived', self.do_PINGreceived)
         self.handleMsg.register('PONGreceived', self.do_PONGreceived)
         self.handleMsg.register('getUserList', self.do_getUserList)
-        self.handleMsg.register('chatPrivate', self.do_chatPrivate)
+        self.handleMsg.register('chatPrivate', self.do_chatPrivate, 3, False)
         self.handleMsg.register('shutdown', self.do_shutdown)
+        self.handleMsg.register('syslog', self.do_syslog, 3, False)
 
         self.clients = {}
         self.lastClient = 0
 
         self.init = False
+        self.keep_alive = True
 
     def __del__(self):
         del self.inQueue
         del self.handleMsg
         del self.clients
-        if self.MDproc.is_alive():
-            self.sendClient(self.MDqueuepath, 'bye', 'system shutdown')
+        #if self.MDproc.is_alive():
+            #self.sendClient(self.MDqueuepath, 'bye', 'system shutdown')
         self.MDproc.join()
         self.mqm.shutdown()
 
@@ -59,7 +63,7 @@ class SVService:
             print 'SVService: Bye'
             return False
 
-        return True
+        return self.keep_alive
 
     def sendClient(self, ID, msgtag, text, obj=None):
         msg = (msgtag, text, obj)
@@ -83,6 +87,9 @@ class SVService:
     def performInQueueMsg(self, msg):
         if not self.handleMsg.performMsg(msg):
             print '[SVService] unknown cmd: ' + msg[0]
+
+    def logfunc(self, msg):
+        self.sendClient(self.MDqueuepath, 'syslog', 'event from SVService', str(msg))
 
     def do_init(self, param):
         if not self.init:
@@ -198,4 +205,10 @@ class SVService:
             self.getSenderInfo(sourceID))
 
     def do_shutdown(self, param):
-        sys.exit(0)
+        self.sendClient(self.MDqueuepath, 'bye', 'system shutdown')
+
+        self.keep_alive = False
+
+    def do_syslog(self, param):
+        msgtag, msg, userID = param
+        self.sendClient(self.MDqueuepath, 'syslog', 'event from ' + userID, msg)

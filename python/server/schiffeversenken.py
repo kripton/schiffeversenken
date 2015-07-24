@@ -56,6 +56,8 @@ if __name__ == '__main__':
             SVC.cycle(SVS)
             if not SVS.cycle(): break
 
+    except KeyboardInterrupt: pass
+
     finally:
         print 'This is the end... cleaning up'
         del SVS

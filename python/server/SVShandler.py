@@ -15,7 +15,8 @@ class SVShandler:
         self.proc.start()
 
     def __del__(self):
-        self.send('bye', 'System shutdown', None)
+        if self.proc.is_alive():
+            self.send('bye', 'System shutdown', None)
         self.proc.join()
         self.qm.shutdown()
 

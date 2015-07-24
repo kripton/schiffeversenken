@@ -12,7 +12,10 @@ from SVError import InitializationError
 def processWorker(queuepath, sock):
     client = SVClient(queuepath, sock)
 
-    while client.cycle(): pass
+    try:
+        while client.cycle(): pass
+    except KeyboardInterrupt: pass
+    finally: del client
 
 
 class SVClient:
@@ -33,7 +36,7 @@ class SVClient:
 
         self.inBuffer = ''
 
-        self.handleMsg = msgHandler()
+        self.handleMsg = msgHandler(self.logfunc)
         self.handleMsg.register('sock', self.do_sock)
         self.handleMsg.register('lobbyMsg', self.do_lobbyMsg)
         self.handleMsg.register('clientNameAccepted', \
@@ -43,7 +46,7 @@ class SVClient:
         self.handleMsg.register('sendPONG', self.do_sendPONG)
         self.handleMsg.register('userList', self.do_userList)
         self.handleMsg.register('bye', self.do_bye)
-        self.handleMsg.register('privateMsg', self.do_privateMsg)
+        self.handleMsg.register('privateMsg', self.do_privateMsg, 3, False)
         self.handleMsg.register('userLeft', self.do_userLeft)
         self.handleMsg.register('userJoined', self.do_userJoined)
 
@@ -87,6 +90,7 @@ class SVClient:
         self.userList = []
 
         self.firstCycle = True
+        self.keep_alive = True
 
     def __del__(self):
         del self.inQueue
@@ -104,7 +108,7 @@ class SVClient:
             self.performInQueueMsg(msg)
         self.FSM.cycle()
 
-        return True
+        return self.keep_alive
 
     def sendPeerRaw(self, text):
         self.sock.send(text)
@@ -119,6 +123,9 @@ class SVClient:
     def performInQueueMsg(self, msg):
         if not self.handleMsg.performMsg(msg):
             print '[SVClient] unknown cmd: ' + msg[0]
+
+    def logfunc(self, msg):
+        self.sendSystem('syslog', str(msg), self.ID)
 
 # callbacks for msg handling: param is (msgtag, text, obj)
     def do_sock(self, param):
@@ -146,7 +153,7 @@ class SVClient:
         self.sendProt(508, 'end of user list')
 
     def do_bye(self, param):
-        sys.exit(0)
+        self.keep_alive = False
 
     def do_privateMsg(self, param):
         self.sendProt(504, 'private message', param)
@@ -154,9 +161,10 @@ class SVClient:
     def do_userLeft(self, param):
         userID = param[2]
         msg = param[1]
-        userName = [x['name'] for x in self.userList \
-            if x['ID'] == userID][0]
-        self.sendProt(510, msg, userName)
+        if userID in [x['ID'] for x in self.userList if x['ID'] == userID]:
+            userName = [x['name'] for x in self.userList \
+                if x['ID'] == userID][0]
+            self.sendProt(510, msg, userName)
         
         self.userList = [x for x in self.userList if x['ID'] != userID]
 
