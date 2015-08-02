@@ -6,6 +6,7 @@ import Majordomo
 import time
 from QueueManager import QueueManager
 from msgHandler import msgHandler
+from SVGhandler import SVGhandler
 
 
 def processWorker():
@@ -42,6 +43,8 @@ class SVService:
 
         self.clients = {}
         self.lastClient = 0
+
+        self.SVG = SVGhandler()
 
         self.init = False
         self.keep_alive = True

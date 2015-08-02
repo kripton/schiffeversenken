@@ -1,7 +1,6 @@
 import socket
 import multiprocessing
 import time
-import sys
 from QueueManager import QueueManager
 from msgHandler import msgHandler
 from StateMachine import StateMachine
@@ -52,6 +51,8 @@ class SVClient:
 
         self.handleProtIn = msgHandler()
         self.handleProtIn.register(210, self.do_210_in_proposeName, 2)
+        self.handleProtIn.register(401, self.do_401_in_listRooms, 1)
+        self.handleProtIn.register(406, self.do_406_in_newRoom, 1)
         self.handleProtIn.register(501, self.do_501_in_chatLobby)
         self.handleProtIn.register(502, self.do_502_in_chatPrivate)
         self.handleProtIn.register(505, self.do_505_in_getUserList, 1)
@@ -180,6 +181,18 @@ class SVClient:
             return
 
         self.FSMsymbols['clientNameProposed'] = param[1]
+
+    def do_401_in_listRooms(self, param):
+        if not self.FSM.is_state('online'):
+            self.sendProt(306, 'not ready for games')
+            return
+        self.sendSystem('listRooms', 'list open games', self.ID)
+
+    def do_406_in_newRoom(self, param):
+        if not self.FSM.is_state('online'):
+            self.sendProt(306, 'not ready for games')
+            return
+        self.sendSystem('newRoom', 'create new game', self.ID)
 
     def do_501_in_chatLobby(self, param):
         if not self.FSM.is_state('online'):
