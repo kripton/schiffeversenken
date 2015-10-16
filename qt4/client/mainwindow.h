@@ -5,11 +5,6 @@
 
 #include <QDebug>
 #include <QObject>
-#include <QtNetwork/QTcpSocket>
-#include <QString>
-#include <QStringList>
-#include <QHash>
-#include <cstdlib>
 
 namespace Ui {
 class MainWindow;
@@ -26,18 +21,9 @@ public:
     Ui::MainWindow *ui;
 
 public slots:
-    void doConnect();
-    void sockConnected();
-    void sockDisconnected();
-    void sockError(QAbstractSocket::SocketError);
-    void sockRead();
-    void sendLobbyMessage();
 
 private:
-    QTcpSocket socket;
-    void ParseResponse(QString input);
-    bool isConnected;
-    QHash<QString, QColor> playerColors;
+
 };
 
 #endif // MAINWINDOW_H
