@@ -77,8 +77,8 @@
 *    (Raumnr. 0 entspricht immer der Lobby. Ist default, wenn 501.d1 weggelassen wird.)
 * 501 Client: Nachricht an Lobby schreiben
 *     "501 %s1" %s1: Nachricht
-* 502 Client: Nachricht an Raum schicken
-*     "502 %s1" - Raumnummer nicht anzugeben, da dem Server bekannt
+* 502 Client: Nachricht an Benutzer schicken
+*     "502 %s1 %s2" s1: Spielername, s2: Nachricht
 * 503 Server: Eingehende Nachricht in der Lobby
 *    "503 %s1: %s2" s1: Name d. Abs., %s2: Nachricht
 * 504 Server: Eingehende Nachricht im Raum
@@ -100,6 +100,7 @@
 *    "602 %d1" d1: Protokoll-Versionsnr.
 * 603 Ping
 * 604 Pong
+* 697 Server: Protocol mismatch (und anschließender kick)
 * 698 Server: Ping Timeout (und anschließender kick)
 * 699 Client: Exit
 *
